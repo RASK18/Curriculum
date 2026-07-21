@@ -16,6 +16,7 @@ from reportlab.pdfgen import canvas
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA_PATH = ROOT / "content" / "resume.json"
+VERSION_DATA_DIR = ROOT / "content" / "versions"
 DOCS = ROOT / "docs"
 PDF_NAME = "Rafael-Jimenez-CV.pdf"
 PDF_PATH = DOCS / PDF_NAME
@@ -77,6 +78,9 @@ def render_job(job: dict) -> str:
 
 def render_html(data: dict) -> str:
     person = data["person"]
+    version_meta = ""
+    if data["meta"].get("version"):
+        version_meta = f'\n  <meta name="cv-version" content="{esc(data["meta"]["version"])}">'
     stack = "".join(f"<li>{esc(item)}</li>" for item in data["stack"])
     education = "".join(
         f"""
@@ -101,7 +105,7 @@ def render_html(data: dict) -> str:
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="{esc(data['meta']['description'])}">
+  <meta name="description" content="{esc(data['meta']['description'])}">{version_meta}
   <meta name="robots" content="noindex,nofollow,noarchive">
   <link rel="canonical" href="{esc(data['meta']['canonical'])}">
   <link rel="stylesheet" href="styles.css">
@@ -495,10 +499,9 @@ def draw_page_two(c: canvas.Canvas, data: dict, fonts: dict[str, str]) -> None:
     c.drawRightString(width - 39, 24, "CV · PÁGINA 2")
 
 
-def generate_pdf(data: dict) -> None:
-    fonts = register_fonts()
-    PDF_PATH.parent.mkdir(parents=True, exist_ok=True)
-    c = canvas.Canvas(str(PDF_PATH), pagesize=A4, pageCompression=1)
+def generate_pdf(data: dict, pdf_path: Path, fonts: dict[str, str]) -> None:
+    pdf_path.parent.mkdir(parents=True, exist_ok=True)
+    c = canvas.Canvas(str(pdf_path), pagesize=A4, pageCompression=1)
     c.setTitle(f"{data['person']['name']} · {data['person']['title']}")
     c.setAuthor(data["person"]["name"])
     c.setSubject("Currículum profesional")
@@ -509,22 +512,48 @@ def generate_pdf(data: dict) -> None:
     c.showPage()
     c.save()
 
-    reader = PdfReader(str(PDF_PATH))
+    reader = PdfReader(str(pdf_path))
     if len(reader.pages) != 2:
         raise RuntimeError(f"El PDF debe tener exactamente 2 páginas; se generaron {len(reader.pages)}")
-    OUTPUT_PDF.parent.mkdir(parents=True, exist_ok=True)
-    shutil.copy2(PDF_PATH, OUTPUT_PDF)
+
+
+def generate_site(data: dict, output_dir: Path, fonts: dict[str, str]) -> None:
+    output_dir.mkdir(parents=True, exist_ok=True)
+    markup = "\n".join(line.rstrip() for line in render_html(data).splitlines()) + "\n"
+    (output_dir / "index.html").write_text(markup, encoding="utf-8", newline="\n")
+    generate_pdf(data, output_dir / PDF_NAME, fonts)
+
+
+def copy_shared_assets(output_dir: Path) -> None:
+    shutil.copy2(DOCS / "styles.css", output_dir / "styles.css")
+    shutil.copytree(DOCS / "assets", output_dir / "assets", dirs_exist_ok=True)
 
 
 def main() -> None:
     with DATA_PATH.open("r", encoding="utf-8") as source:
         data = json.load(source)
+    fonts = register_fonts()
     DOCS.mkdir(parents=True, exist_ok=True)
-    (DOCS / "index.html").write_text(render_html(data), encoding="utf-8", newline="\n")
-    generate_pdf(data)
+    generate_site(data, DOCS, fonts)
+    OUTPUT_PDF.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copy2(PDF_PATH, OUTPUT_PDF)
     print(f"HTML: {DOCS / 'index.html'}")
     print(f"PDF:  {PDF_PATH}")
     print(f"PDF:  {OUTPUT_PDF}")
+
+    for version_source in sorted(VERSION_DATA_DIR.glob("*.json")):
+        with version_source.open("r", encoding="utf-8") as source:
+            version_data = json.load(source)
+        version_id = version_data["meta"].get("version")
+        if version_id != version_source.stem:
+            raise RuntimeError(f"La versión de {version_source.name} debe ser {version_source.stem}")
+        version_output = DOCS / version_id
+        if version_output.exists():
+            print(f"VERSIÓN {version_id}: conservada sin cambios en {version_output}")
+            continue
+        generate_site(version_data, version_output, fonts)
+        copy_shared_assets(version_output)
+        print(f"VERSIÓN {version_id}: {version_output}")
 
 
 if __name__ == "__main__":

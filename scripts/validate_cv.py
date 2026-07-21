@@ -15,6 +15,8 @@ HTML_PATH = DOCS / "index.html"
 CSS_PATH = DOCS / "styles.css"
 PDF_PATH = DOCS / "Rafael-Jimenez-CV.pdf"
 DATA_PATH = ROOT / "content" / "resume.json"
+VERSION_DATA_DIR = ROOT / "content" / "versions"
+PDF_NAME = "Rafael-Jimenez-CV.pdf"
 
 
 def assert_true(condition: bool, message: str) -> None:
@@ -39,15 +41,20 @@ def html_text(markup: str) -> str:
     return re.sub(r"\s+", " ", html.unescape(without_tags)).strip()
 
 
-def validate_html(data: dict) -> None:
-    markup = HTML_PATH.read_text(encoding="utf-8")
+def validate_html(data: dict, html_path: Path) -> None:
+    page_dir = html_path.parent
+    markup = html_path.read_text(encoding="utf-8")
     text = html_text(markup)
     assert_true('<html lang="es">' in markup, "Falta lang=es")
     assert_true('content="noindex,nofollow,noarchive"' in markup, "Falta la directiva robots")
     assert_true(f'href="{data["meta"]["canonical"]}"' in markup, "Canonical incorrecta")
     assert_true('href="Rafael-Jimenez-CV.pdf"' in markup, "El PDF no usa una ruta relativa")
     assert_true("<svg" not in markup.lower(), "El HTML no debe contener SVG dibujado manualmente")
-    assert_true(not (DOCS / "CNAME").exists(), "El project site no debe incluir CNAME")
+    if data["meta"].get("version"):
+        assert_true(
+            f'content="{data["meta"]["version"]}"' in markup,
+            "Falta la versión del CV en los metadatos",
+        )
 
     expected = [
         data["person"]["name"],
@@ -64,12 +71,12 @@ def validate_html(data: dict) -> None:
     for target in re.findall(r'(?:src|href)="([^"]+)"', markup):
         if target.startswith(("http://", "https://", "mailto:", "tel:", "#")):
             continue
-        local = DOCS / unquote(target)
+        local = page_dir / unquote(target)
         assert_true(local.exists(), f"Recurso relativo inexistente: {target}")
 
     for icon_name in ("download", "mail", "phone", "map-pin", "external-link"):
-        assert_true((DOCS / "assets" / "icons" / f"{icon_name}.svg").exists(), f"Falta icono Lucide: {icon_name}")
-    assert_true((DOCS / "assets" / "LUCIDE-LICENSE.txt").exists(), "Falta la licencia de Lucide")
+        assert_true((page_dir / "assets" / "icons" / f"{icon_name}.svg").exists(), f"Falta icono Lucide: {icon_name}")
+    assert_true((page_dir / "assets" / "LUCIDE-LICENSE.txt").exists(), "Falta la licencia de Lucide")
 
 
 def validate_css() -> None:
@@ -84,8 +91,8 @@ def validate_css() -> None:
                 "Los controles e iconos decorativos deben ocultarse al imprimir")
 
 
-def validate_pdf(data: dict) -> None:
-    reader = PdfReader(str(PDF_PATH))
+def validate_pdf(data: dict, pdf_path: Path) -> None:
+    reader = PdfReader(str(pdf_path))
     assert_true(len(reader.pages) == 2, "El PDF debe tener exactamente dos páginas")
     for page in reader.pages:
         width = float(page.mediabox.width)
@@ -138,12 +145,24 @@ def validate_contrast() -> None:
 
 def main() -> None:
     data = json.loads(DATA_PATH.read_text(encoding="utf-8"))
-    validate_html(data)
+    assert_true(not (DOCS / "CNAME").exists(), "El project site no debe incluir CNAME")
+    validate_html(data, HTML_PATH)
     validate_css()
-    validate_pdf(data)
+    validate_pdf(data, PDF_PATH)
     validate_contrast()
     print("HTML: rutas, metadatos, contenido e iconos correctos")
     print("PDF: 2 páginas A4, texto seleccionable y 3 enlaces clicables")
+
+    for version_source in sorted(VERSION_DATA_DIR.glob("*.json")):
+        version_data = json.loads(version_source.read_text(encoding="utf-8"))
+        version_id = version_data["meta"].get("version")
+        assert_true(version_id == version_source.stem, f"Versión inconsistente en {version_source.name}")
+        version_dir = DOCS / version_id
+        validate_html(version_data, version_dir / "index.html")
+        validate_pdf(version_data, version_dir / PDF_NAME)
+        assert_true((version_dir / "styles.css").read_bytes() == CSS_PATH.read_bytes(),
+                    f"Los estilos de {version_id} no coinciden con la versión publicada")
+        print(f"VERSIÓN {version_id}: HTML y PDF correctos")
 
 
 if __name__ == "__main__":

@@ -1,7 +1,8 @@
 {
   "meta": {
     "language": "es",
-    "canonical": "https://disboard.es/Curriculum/",
+    "canonical": "https://disboard.es/Curriculum/v1/",
+    "version": "v1",
     "pdf_filename": "Rafael-Jimenez-CV.pdf",
     "description": "CV de Rafael Jiménez Aguirrebeña, Backend .NET Engineer especializado en APIs, SQL Server y automatización CI/CD."
   },

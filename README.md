@@ -1,8 +1,9 @@
 # CV de Rafael Jiménez Aguirrebeña
 
-CV estático en español, preparado para GitHub Pages y para impresión A4. El
-HTML y el PDF se generan desde una única fuente estructurada:
-[`content/resume.json`](content/resume.json).
+CV estático en español, preparado para GitHub Pages y para impresión A4. La
+versión actual se genera desde [`content/resume.json`](content/resume.json) y
+cada versión histórica conserva su propia instantánea estructurada en
+[`content/versions/`](content/versions/).
 
 ## Generación
 
@@ -16,6 +17,8 @@ El comando actualiza:
 
 - `docs/index.html`
 - `docs/Rafael-Jimenez-CV.pdf`
+- `docs/v1/index.html`
+- `docs/v1/Rafael-Jimenez-CV.pdf`
 - `output/pdf/Rafael-Jimenez-CV.pdf`
 
 Validación técnica:
@@ -23,6 +26,17 @@ Validación técnica:
 ```powershell
 python scripts/validate_cv.py
 ```
+
+## Versiones
+
+- `https://disboard.es/Curriculum/` contiene siempre la versión actual.
+- `https://disboard.es/Curriculum/v1/` es una instantánea histórica e inmutable.
+
+Para publicar una nueva versión se añade primero su fuente a
+`content/versions/vN.json`. El campo `meta.version` debe coincidir con el nombre
+del archivo; el generador se encarga de crear la carpeta correspondiente en
+`docs/`. Si esa carpeta ya existe, no la sobrescribe: una versión publicada
+permanece inmutable.
 
 ## Revisión local
 
@@ -35,9 +49,10 @@ framework, compilador frontend ni backend.
 
 ## Publicación
 
-GitHub Pages se configura con la rama `main` y la carpeta `/docs`. El dominio
-personalizado se hereda del repositorio de usuario `RASK18/RASK18.github.io`;
-por ese motivo este repositorio no contiene un archivo `CNAME`.
+El repositorio público es `RASK18/Curriculum`. GitHub Pages se configura con la
+rama `main` y la carpeta `/docs`. El dominio personalizado se hereda del
+repositorio de usuario `RASK18/RASK18.github.io`; por ese motivo este
+repositorio no contiene un archivo `CNAME`.
 
 ## Licencias de terceros
 
