@@ -347,3 +347,8 @@ healthchecksdb
 
 # Backup folder for Package Reference Convert tool in Visual Studio 2017
 MigrationBackup/
+
+# Dependencias y artefactos temporales usados durante la generación/QA
+.tmp-lucide/
+.tmp-lucide-cache/
+tmp/
