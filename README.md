@@ -20,13 +20,7 @@ mismo HTML/CSS mediante Chrome o Edge en modo headless:
 python scripts/generate_v2.py
 ```
 
-El comando actualiza:
-
-- `docs/index.html`
-- `docs/Rafael-Jimenez-CV.pdf`
-- `docs/v1/index.html`
-- `docs/v1/Rafael-Jimenez-CV.pdf`
-- `output/pdf/Rafael-Jimenez-CV.pdf`
+El comando actualiza los html y pdf
 
 Validación técnica:
 
