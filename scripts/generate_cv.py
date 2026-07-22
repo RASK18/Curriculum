@@ -551,6 +551,11 @@ def main() -> None:
         if version_output.exists():
             print(f"VERSIÓN {version_id}: conservada sin cambios en {version_output}")
             continue
+        layout = version_data["meta"].get("layout", "editorial")
+        if layout != "editorial":
+            raise RuntimeError(
+                f"La versión {version_id} usa el layout {layout}; ejecuta su generador específico"
+            )
         generate_site(version_data, version_output, fonts)
         copy_shared_assets(version_output)
         print(f"VERSIÓN {version_id}: {version_output}")

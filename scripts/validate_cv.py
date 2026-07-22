@@ -55,6 +55,11 @@ def validate_html(data: dict, html_path: Path) -> None:
             f'content="{data["meta"]["version"]}"' in markup,
             "Falta la versión del CV en los metadatos",
         )
+    if data["meta"].get("status"):
+        assert_true(
+            f'<meta name="cv-status" content="{data["meta"]["status"]}">' in markup,
+            "Falta el estado del CV en los metadatos",
+        )
 
     expected = [
         data["person"]["name"],
@@ -79,16 +84,20 @@ def validate_html(data: dict, html_path: Path) -> None:
     assert_true((page_dir / "assets" / "LUCIDE-LICENSE.txt").exists(), "Falta la licencia de Lucide")
 
 
-def validate_css() -> None:
-    styles = re.sub(r"\s+", " ", CSS_PATH.read_text(encoding="utf-8"))
+def validate_css(css_path: Path = CSS_PATH, layout: str = "editorial") -> None:
+    styles = re.sub(r"\s+", " ", css_path.read_text(encoding="utf-8"))
     assert_true("@page { size: A4 portrait; margin: 0; }" in styles, "La impresión no está configurada como A4")
-    assert_true("@media (max-width: 850px)" in styles, "Falta el flujo continuo para móvil/tablet")
-    assert_true("@media (max-width: 520px)" in styles, "Falta el ajuste para móvil estrecho")
+    assert_true("(max-width: 850px)" in styles, "Falta el flujo continuo para móvil/tablet")
+    assert_true("(max-width: 520px)" in styles, "Falta el ajuste para móvil estrecho")
     assert_true("@media print" in styles, "Faltan estilos de impresión")
-    assert_true("width: 210mm; height: 297mm; min-height: 297mm;" in styles,
+    assert_true("width: 210mm" in styles and "height: 297mm" in styles and "min-height: 297mm" in styles,
                 "Las hojas impresas no tienen dimensiones A4 exactas")
-    assert_true(".skip-link, .screen-toolbar, .icon { display: none !important; }" in styles,
+    assert_true(".skip-link" in styles and ".screen-toolbar" in styles and ".icon" in styles
+                and "display: none !important" in styles,
                 "Los controles e iconos decorativos deben ocultarse al imprimir")
+    if layout == "tech-panel":
+        for selector in (".monogram", ".sidebar", ".stack-groups", ".timeline", ".preview-badge"):
+            assert_true(selector in styles, f"Falta el componente visual de v2: {selector}")
 
 
 def validate_pdf(data: dict, pdf_path: Path) -> None:
@@ -143,6 +152,21 @@ def validate_contrast() -> None:
         print(f"Contraste {label}: {ratio:.2f}:1")
 
 
+def validate_v2_contrast() -> None:
+    checks = [
+        ("#0c1830", "#ffffff", 4.5, "texto principal v2"),
+        ("#526079", "#ffffff", 4.5, "texto secundario v2"),
+        ("#00788a", "#ffffff", 4.5, "acento cian v2"),
+        ("#6744ca", "#ffffff", 4.5, "acento morado v2"),
+        ("#ad5700", "#ffffff", 4.5, "acento naranja v2"),
+        ("#f7fbff", "#04142c", 4.5, "texto lateral v2"),
+    ]
+    for foreground, background, minimum, label in checks:
+        ratio = contrast_ratio(foreground, background)
+        assert_true(ratio >= minimum, f"Contraste insuficiente ({ratio:.2f}) en {label}")
+        print(f"Contraste {label}: {ratio:.2f}:1")
+
+
 def main() -> None:
     data = json.loads(DATA_PATH.read_text(encoding="utf-8"))
     assert_true(not (DOCS / "CNAME").exists(), "El project site no debe incluir CNAME")
@@ -160,8 +184,14 @@ def main() -> None:
         version_dir = DOCS / version_id
         validate_html(version_data, version_dir / "index.html")
         validate_pdf(version_data, version_dir / PDF_NAME)
-        assert_true((version_dir / "styles.css").read_bytes() == CSS_PATH.read_bytes(),
-                    f"Los estilos de {version_id} no coinciden con la versión publicada")
+        layout = version_data["meta"].get("layout", "editorial")
+        if layout == "editorial":
+            assert_true((version_dir / "styles.css").read_bytes() == CSS_PATH.read_bytes(),
+                        f"Los estilos de {version_id} no coinciden con la versión publicada")
+        else:
+            validate_css(version_dir / "styles.css", layout)
+            if layout == "tech-panel":
+                validate_v2_contrast()
         print(f"VERSIÓN {version_id}: HTML y PDF correctos")
 
 

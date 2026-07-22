@@ -1,0 +1,154 @@
+{
+  "meta": {
+    "language": "es",
+    "canonical": "https://disboard.es/Curriculum/v2/",
+    "pdf_filename": "Rafael-Jimenez-CV.pdf",
+    "description": "Vista previa v2 del CV de Rafael Jiménez Aguirrebeña, Backend .NET Engineer especializado en APIs, SQL Server y automatización CI/CD.",
+    "version": "v2",
+    "status": "draft",
+    "layout": "tech-panel"
+  },
+  "person": {
+    "name": "Rafael Jiménez Aguirrebeña",
+    "title": "Backend .NET Engineer",
+    "tagline": "Backend · APIs · Automatización",
+    "location": "Boadilla del Monte, Madrid",
+    "email": "rafaelja1809@gmail.com",
+    "phone_display": "679 53 32 06",
+    "phone_href": "+34679533206",
+    "linkedin_display": "linkedin.com/in/rafaelja",
+    "linkedin_href": "https://www.linkedin.com/in/rafaelja",
+    "availability": "Remoto prioritario · Híbrido negociable hasta 2 días presenciales por semana cerca de Boadilla del Monte"
+  },
+  "profile": "Backend .NET con más de 8 años de experiencia desarrollando y modernizando APIs, automatizando entregas y resolviendo lógica de negocio compleja junto a equipos de producto. Especializado en C#, SQL Server, diseño REST y mejora continua de sistemas con legado.",
+  "stack": [
+    "C#",
+    ".NET / ASP.NET Core",
+    "SQL Server",
+    "Entity Framework Core",
+    "REST APIs",
+    "Azure DevOps",
+    "CI/CD",
+    "Docker",
+    "Kubernetes",
+    "Git",
+    "xUnit"
+  ],
+  "stack_groups": [
+    {
+      "title": "Backend",
+      "icon": "code-xml",
+      "accent": "cyan",
+      "items": ["C#", ".NET / ASP.NET Core", "REST APIs", "Entity Framework Core", "Dapper", "MediatR"]
+    },
+    {
+      "title": "Datos",
+      "icon": "database",
+      "accent": "orange",
+      "items": ["SQL Server", "T-SQL", "stored procedures", "índices", "planes de ejecución", "Redis"]
+    },
+    {
+      "title": "Cloud & DevOps",
+      "icon": "cloud",
+      "accent": "purple",
+      "items": ["Azure DevOps", "CI/CD", "Docker", "Kubernetes", "Git"]
+    },
+    {
+      "title": "Testing & observabilidad",
+      "icon": "test-tube",
+      "accent": "blue",
+      "items": ["xUnit", "Moq", "FluentAssertions", "Serilog", "Swagger", "Prometheus"]
+    },
+    {
+      "title": "Integraciones",
+      "icon": "workflow",
+      "accent": "orange",
+      "items": ["Stripe", "Zuora", "Apple / Google stores", "Salesforce"]
+    }
+  ],
+  "projects": [
+    {
+      "name": "Viajes El Corte Inglés · Vuelos",
+      "company": "UST",
+      "role": "Software Engineer",
+      "dates": "jul 2025 — actualidad",
+      "team": "Equipo: 2 backend, 1 frontend y 3 perfiles de negocio/pruebas",
+      "bullets": [
+        "Evolución de una API en .NET 8 para el dominio de vuelos, contratación y gestión de riesgo.",
+        "Trabajo intensivo con SQL Server sobre stored procedures, funciones, índices y planes de ejecución.",
+        "Incorporación de Entity Framework Core con enfoque Database First y pruebas automatizadas con xUnit, Moq y FluentAssertions."
+      ],
+      "technologies": ["C#", ".NET 8", "ASP.NET Core", "SQL Server", "EF Core", "xUnit", "Serilog", "Swagger", "Prometheus"]
+    },
+    {
+      "name": "LaLiga SportsTV · Suscripciones",
+      "company": "Grupo Solutio",
+      "role": "Backend Developer",
+      "dates": "may 2022 — jun 2025",
+      "team": "Equipo: 3 backend, 1 frontend, 1 UX y 2 QA",
+      "bullets": [
+        "Desarrollo y mantenimiento del backend de suscripciones para una plataforma OTT de contenidos y directos deportivos.",
+        "Evolución de APIs, procesos e integraciones de facturación y pago con Stripe, Zuora y las tiendas de Apple y Google.",
+        "Trabajo en un entorno distribuido con observabilidad, caché, despliegues contenerizados y pipelines de Azure DevOps."
+      ],
+      "technologies": ["C#", ".NET", "SQL Server", "EF Core", "Dapper", "Redis", "MediatR", "Azure DevOps", "Docker", "Kubernetes"]
+    },
+    {
+      "name": "SEK / UCJC · APIs y admisiones",
+      "company": "Grupo Solutio",
+      "role": "Backend Developer",
+      "dates": "ene 2019 — abr 2022",
+      "team": "Equipo: 2 backend, 1 frontend y 1 QA",
+      "bullets": [
+        "Desarrollo de nuevas funcionalidades y resolución de incidencias para los servicios del grupo educativo SEK.",
+        "Implantación de un pipeline completo de CI/CD en Azure DevOps para compilar, probar y desplegar con menos pasos manuales.",
+        "Refactorización integral de una API legacy y creación de paquetes NuGet internos para compartir código entre microservicios.",
+        "Responsable backend de la nueva API de admisiones de UCJC: análisis, interlocución con cliente y coordinación del contrato con frontend."
+      ],
+      "technologies": ["C#", ".NET Core", "REST", "Azure DevOps", "CI/CD", "NuGet", "Docker", "Kubernetes", "Salesforce"]
+    }
+  ],
+  "earlier_experience": [
+    {
+      "company": "SIVSA",
+      "role": "Programador .NET / Full Stack",
+      "dates": "may 2018 — ene 2019",
+      "summary": "Desarrollo y mantenimiento de aplicaciones empresariales, desde la lógica C# y el acceso a datos hasta interfaces web y soporte directo a cliente.",
+      "technologies": ["C#", ".NET Framework / Core", "LINQ", "SQL", "HTML", "CSS", "JavaScript", "Bootstrap"]
+    },
+    {
+      "company": "FDS Spain / DXC",
+      "role": "Technical Remote Specialist",
+      "dates": "dic 2017 — may 2018",
+      "summary": "Monitorización de seguridad con ArcSight, análisis de logs y comunicación de incidencias conforme a los procedimientos del servicio.",
+      "technologies": ["ArcSight", "Monitorización", "Análisis de logs", "Gestión de incidencias"]
+    }
+  ],
+  "education": [
+    {
+      "title": "Técnico Superior en Desarrollo de Aplicaciones Multiplataforma (DAM)",
+      "institution": "IES Azarquiel · Toledo",
+      "dates": "2013 — 2016"
+    },
+    {
+      "title": "Máster en Seguridad Informática y Hacking Ético",
+      "institution": "CICE · 300 horas · Calificación: Notable",
+      "dates": "2016 — 2017"
+    }
+  ],
+  "certifications": [
+    {
+      "title": "CompTIA Security+ ce",
+      "status": "Credencial histórica: obtenida en 2017, no vigente desde 2020"
+    },
+    {
+      "title": "Certified Ethical Hacker (CEH)",
+      "status": "Credencial histórica: obtenida en 2018, no vigente desde 2021"
+    }
+  ],
+  "languages": [
+    "Español · Nativo",
+    "Inglés · B1 Cambridge PET (2017)"
+  ],
+  "work_style": "Mejora continua orientada a reducir trabajo manual y deuda técnica: automatización, refactorización y limpieza de código, coordinando contratos, pruebas y despliegues con el equipo."
+}
