@@ -1,4 +1,4 @@
-# CV de Rafael Jiménez Aguirrebeña
+# Curriculum
 
 CV estático en español, preparado para GitHub Pages y para impresión A4. La
 versión actual se genera desde [`content/resume.json`](content/resume.json) y
