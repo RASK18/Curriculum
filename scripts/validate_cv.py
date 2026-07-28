@@ -69,6 +69,8 @@ def validate_html(data: dict, html_path: Path) -> None:
         data["person"]["phone_display"],
         *(project["name"] for project in data["projects"]),
         *(item for item in data["stack"]),
+        *(certification["title"] for certification in data["certifications"]),
+        *(certification["status"] for certification in data["certifications"]),
     ]
     for value in expected:
         assert_true(value in text, f"Falta contenido esencial en HTML: {value}")
@@ -82,6 +84,11 @@ def validate_html(data: dict, html_path: Path) -> None:
     for icon_name in ("download", "mail", "phone", "map-pin", "external-link"):
         assert_true((page_dir / "assets" / "icons" / f"{icon_name}.svg").exists(), f"Falta icono Lucide: {icon_name}")
     assert_true((page_dir / "assets" / "LUCIDE-LICENSE.txt").exists(), "Falta la licencia de Lucide")
+    if data["meta"].get("layout") == "tech-panel":
+        font_dir = page_dir / "assets" / "fonts" / "roboto-condensed"
+        assert_true((font_dir / "RobotoCondensed-Variable.ttf").exists(), "Falta Roboto Condensed local")
+        assert_true((font_dir / "OFL.txt").exists(), "Falta la licencia OFL de Roboto Condensed")
+        assert_true("no vigente" not in text.casefold(), "La v2 no debe mostrar el estado de caducidad")
 
 
 def validate_css(css_path: Path = CSS_PATH, layout: str = "editorial") -> None:
@@ -92,17 +99,21 @@ def validate_css(css_path: Path = CSS_PATH, layout: str = "editorial") -> None:
     assert_true("@media print" in styles, "Faltan estilos de impresión")
     assert_true("width: 210mm" in styles and "height: 297mm" in styles and "min-height: 297mm" in styles,
                 "Las hojas impresas no tienen dimensiones A4 exactas")
-    assert_true(".skip-link" in styles and ".screen-toolbar" in styles and ".icon" in styles
+    assert_true(".skip-link" in styles and ".screen-toolbar" in styles
                 and "display: none !important" in styles,
-                "Los controles e iconos decorativos deben ocultarse al imprimir")
+                "Los controles de pantalla deben ocultarse al imprimir")
     if layout == "tech-panel":
-        for selector in (".monogram", ".sidebar", ".stack-groups", ".timeline", ".preview-badge"):
+        for selector in (".monogram", ".sidebar", ".stack-groups", ".timeline", ".bottom-strip"):
             assert_true(selector in styles, f"Falta el componente visual de v2: {selector}")
 
 
 def validate_pdf(data: dict, pdf_path: Path) -> None:
     reader = PdfReader(str(pdf_path))
-    assert_true(len(reader.pages) == 2, "El PDF debe tener exactamente dos páginas")
+    expected_pages = data["meta"].get("pages", 2)
+    assert_true(
+        len(reader.pages) == expected_pages,
+        f"El PDF debe tener exactamente {expected_pages} página(s)",
+    )
     for page in reader.pages:
         width = float(page.mediabox.width)
         height = float(page.mediabox.height)
@@ -116,14 +127,13 @@ def validate_pdf(data: dict, pdf_path: Path) -> None:
         data["person"]["email"],
         data["person"]["phone_display"],
         *(project["name"] for project in data["projects"]),
-        "CompTIA Security+ ce",
-        "Certified Ethical Hacker (CEH)",
-        "no vigente desde 2020",
-        "no vigente desde 2021",
+        *(certification["title"] for certification in data["certifications"]),
+        *(certification["status"] for certification in data["certifications"]),
     ]
-    normalized = re.sub(r"\s+", " ", extracted)
+    normalized = re.sub(r"\s+", " ", extracted).casefold()
     for value in expected:
-        assert_true(re.sub(r"\s+", " ", value) in normalized, f"Falta contenido esencial en PDF: {value}")
+        expected_value = re.sub(r"\s+", " ", value).casefold()
+        assert_true(expected_value in normalized, f"Falta contenido esencial en PDF: {value}")
 
     links = []
     for page in reader.pages:

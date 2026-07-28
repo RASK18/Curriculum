@@ -14,6 +14,7 @@ ROOT = Path(__file__).resolve().parents[1]
 DATA_PATH = ROOT / "content" / "versions" / "v2.json"
 STYLE_PATH = ROOT / "layouts" / "v2" / "styles.css"
 ASSET_SOURCE = ROOT / "assets" / "lucide"
+FONT_SOURCE = ROOT / "assets" / "fonts" / "roboto-condensed"
 OUTPUT_DIR = ROOT / "docs" / "v2"
 PDF_NAME = "Rafael-Jimenez-CV.pdf"
 OUTPUT_PDF = ROOT / "output" / "pdf" / "Rafael-Jimenez-CV-v2.pdf"
@@ -101,15 +102,22 @@ def render_sidebar_page_one(data: dict) -> str:
     return f"""
       <aside class="sidebar" aria-label="Perfil y stack técnico">
         <div class="monogram-wrap" aria-hidden="true">
-          <div class="monogram"><span>RJ</span></div>
+          <div class="monogram">
+            <span class="monogram-r">R</span>
+            <span class="monogram-j">J</span>
+          </div>
         </div>
         <section class="side-section" aria-labelledby="perfil-v2">
           <h2 class="side-heading" id="perfil-v2">{icon('user-round')}<span>Perfil</span></h2>
           <p class="profile">{esc(data['profile'])}</p>
         </section>
-        <section class="side-section" aria-labelledby="stack-v2">
+        <section class="side-section side-section--stack" aria-labelledby="stack-v2">
           <h2 class="side-heading" id="stack-v2">{icon('code-xml')}<span>Stack técnico</span></h2>
           <div class="stack-groups">{render_stack_groups(data['stack_groups'])}</div>
+        </section>
+        <section class="side-section side-section--work" aria-labelledby="trabajo-v2">
+          <h2 class="side-heading" id="trabajo-v2">{icon('workflow')}<span>Forma de trabajar</span></h2>
+          <p class="work-style">{esc(data['work_style'])}</p>
         </section>
       </aside>
     """
@@ -143,7 +151,10 @@ def render_sidebar_page_two(data: dict) -> str:
     return f"""
       <aside class="sidebar" aria-label="Formación, idiomas y certificaciones">
         <div class="monogram-wrap" aria-hidden="true">
-          <div class="monogram"><span>RJ</span></div>
+          <div class="monogram">
+            <span class="monogram-r">R</span>
+            <span class="monogram-j">J</span>
+          </div>
         </div>
         <section class="side-section" aria-labelledby="idiomas-v2">
           <h2 class="side-heading" id="idiomas-v2">{icon('languages')}<span>Idiomas</span></h2>
@@ -170,6 +181,33 @@ def render_html(data: dict) -> str:
     first_name, surnames = split_name(person["name"])
     projects = data["projects"]
     jobs = "".join(render_job(job) for job in data["earlier_experience"])
+    education = "".join(
+        f"""
+        <article class="education-card">
+          <div>
+            <h3>{esc(item['title'])}</h3>
+            <p>{esc(item['institution'])}</p>
+          </div>
+          <span>{esc(item['dates'])}</span>
+        </article>
+        """
+        for item in data["education"]
+    )
+    language_codes = ("ES", "EN")
+    languages = "".join(
+        f'<li><span class="lang-code" aria-hidden="true">{code}</span><strong>{esc(item)}</strong></li>'
+        for code, item in zip(language_codes, data["languages"])
+    )
+    certifications = "".join(
+        f"""
+        <li>
+          {icon('shield-check')}
+          <strong>{esc(item['title'])}</strong>
+          <span class="cert-year" aria-label="Obtenida en {esc(item['status'])}">{esc(item['status'])}</span>
+        </li>
+        """
+        for item in data["certifications"]
+    )
     return f"""<!doctype html>
 <html lang="{esc(data['meta']['language'])}">
 <head>
@@ -181,68 +219,61 @@ def render_html(data: dict) -> str:
   <meta name="robots" content="noindex,nofollow,noarchive">
   <link rel="canonical" href="{esc(data['meta']['canonical'])}">
   <link rel="stylesheet" href="styles.css">
-  <title>{esc(person['name'])} · {esc(person['title'])} · vista previa v2</title>
+  <title>{esc(person['name'])} · {esc(person['title'])}</title>
 </head>
 <body>
   <a class="skip-link" href="#contenido">Saltar al contenido</a>
   <nav class="screen-toolbar" aria-label="Acciones del currículum">
     <a class="toolbar-link" href="{esc(data['meta']['pdf_filename'])}" download>
-      {icon('download')} Descargar PDF v2
+      {icon('download')} Descargar PDF
     </a>
   </nav>
 
   <main class="cv" id="contenido">
-    <article class="page" aria-label="Página 1 de 2 del currículum v2">
-      <header class="main-header">
-        <div class="preview-line">
-          <span class="preview-badge">Vista previa · v2</span>
-          <span class="page-count">01 / 02</span>
-        </div>
-        <h1 class="name">{esc(first_name)}<span>{esc(surnames)}</span></h1>
-        <p class="role">{esc(person['title'])}</p>
-        {render_contact(person)}
-        <p class="availability">{icon('house')}{esc(person['availability'])}</p>
-      </header>
+    <article class="page" aria-label="Currículum v2 de una página">
+      <div class="upper-layout">
+        <header class="main-header">
+          <h1 class="name">{esc(first_name)}&nbsp;<span>{esc(surnames)}</span></h1>
+          <p class="role">{esc(person['title'])}</p>
+          {render_contact(person)}
+          <p class="availability">{icon('house')}{esc(person['availability'])}</p>
+        </header>
 
-      {render_sidebar_page_one(data)}
+        {render_sidebar_page_one(data)}
 
-      <div class="main-content">
-        <section aria-labelledby="experiencia-v2">
-          <h2 class="section-banner" id="experiencia-v2">Experiencia profesional</h2>
-          <div class="timeline">
-            {render_project(projects[0], 'cyan')}
-            {render_project(projects[1], 'orange')}
+        <div class="main-content">
+          <section aria-labelledby="experiencia-v2">
+            <h2 class="section-banner" id="experiencia-v2">Experiencia profesional</h2>
+            <div class="timeline">
+              {render_project(projects[0], 'cyan')}
+              {render_project(projects[1], 'orange')}
+              {render_project(projects[2], 'purple')}
+            </div>
+          </section>
+
+          <div class="lower-grid">
+            <section class="compact-panel" aria-labelledby="experiencia-anterior-v2">
+              <h2 class="lower-heading" id="experiencia-anterior-v2">{icon('clock-3')}Experiencia anterior</h2>
+              <div class="jobs">{jobs}</div>
+            </section>
+            <section class="compact-panel compact-panel--education" aria-labelledby="formacion-v2">
+              <h2 class="lower-heading" id="formacion-v2">{icon('graduation-cap')}Formación</h2>
+              <div class="education-compact">{education}</div>
+            </section>
           </div>
-        </section>
-      </div>
-      <footer class="page-footer">Currículum · vista previa v2</footer>
-    </article>
-
-    <article class="page page--second" aria-label="Página 2 de 2 del currículum v2">
-      <header class="main-header">
-        <div class="preview-line">
-          <span class="preview-badge">Vista previa · v2</span>
-          <span class="page-count">02 / 02</span>
         </div>
-        <h2 class="continuation-title">{esc(first_name)} <span>{esc(surnames)}</span></h2>
-        <p class="continuation-role">{esc(person['title'])} · experiencia, formación y credenciales</p>
-      </header>
-
-      <div class="main-content">
-        <section aria-labelledby="experiencia-continuacion-v2">
-          <h2 class="section-banner" id="experiencia-continuacion-v2">Experiencia · continuación</h2>
-          <div class="timeline">
-            {render_project(projects[2], 'purple')}
-          </div>
-        </section>
-        <section aria-labelledby="experiencia-anterior-v2">
-          <h2 class="lower-heading" id="experiencia-anterior-v2">{icon('clock-3')}Experiencia anterior</h2>
-          <div class="jobs">{jobs}</div>
-        </section>
       </div>
 
-      {render_sidebar_page_two(data)}
-      <footer class="page-footer">Currículum · vista previa v2</footer>
+      <footer class="bottom-strip">
+        <section aria-labelledby="idiomas-v2">
+          <h2 class="strip-heading" id="idiomas-v2">Idiomas</h2>
+          <ul class="language-strip">{languages}</ul>
+        </section>
+        <section aria-labelledby="certificaciones-v2">
+          <h2 class="strip-heading" id="certificaciones-v2">Certificaciones</h2>
+          <ul class="cert-strip">{certifications}</ul>
+        </section>
+      </footer>
     </article>
   </main>
 </body>
@@ -293,8 +324,8 @@ def generate_pdf(html_path: Path, pdf_path: Path) -> None:
             f"Salida: {result.stdout}\nError: {result.stderr}"
         )
     reader = PdfReader(str(pdf_path))
-    if len(reader.pages) != 2:
-        raise RuntimeError(f"El PDF de v2 debe tener 2 páginas; se generaron {len(reader.pages)}")
+    if len(reader.pages) != 1:
+        raise RuntimeError(f"El PDF de v2 debe tener 1 página; se generaron {len(reader.pages)}")
 
 
 def main() -> None:
@@ -309,6 +340,7 @@ def main() -> None:
     shutil.copy2(STYLE_PATH, OUTPUT_DIR / "styles.css")
     shutil.copytree(ASSET_SOURCE / "icons", OUTPUT_DIR / "assets" / "icons", dirs_exist_ok=True)
     shutil.copy2(ASSET_SOURCE / "LUCIDE-LICENSE.txt", OUTPUT_DIR / "assets" / "LUCIDE-LICENSE.txt")
+    shutil.copytree(FONT_SOURCE, OUTPUT_DIR / "assets" / "fonts" / "roboto-condensed", dirs_exist_ok=True)
 
     pdf_path = OUTPUT_DIR / PDF_NAME
     generate_pdf(html_path, pdf_path)
