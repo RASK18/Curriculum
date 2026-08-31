@@ -19,9 +19,9 @@
     "phone_href": "+34679533206",
     "linkedin_display": "linkedin.com/in/rafaelja",
     "linkedin_href": "https://www.linkedin.com/in/rafaelja",
-    "availability": "Busco trabajo en remoto"
+    "availability": "Modalidad objetivo: remoto"
   },
-  "profile": "Backend .NET especializado en desarrollar y modernizar APIs, automatizar entregas y resolver lógica de negocio compleja junto a equipos de producto. Experiencia sólida en C#, SQL Server, diseño REST y mejora continua de sistemas con legado.",
+  "profile": "Ingeniero backend .NET con más de 8 años modernizando APIs y resolviendo lógica de negocio compleja. Especializado en C#, SQL Server, diseño REST, automatización de entregas y mejora continua de sistemas con legado.",
   "stack": [
     "C#",
     ".NET / ASP.NET Core",
@@ -81,9 +81,9 @@
       "dates": "jul 2025 — actualidad",
       "team": "Equipo: 2 backend · 1 frontend · 3 negocio/pruebas",
       "bullets": [
-        "Evolución de una API .NET 8 para el dominio de vuelos, contratación y gestión de riesgo.",
         "Trabajo intensivo con SQL Server sobre stored procedures, funciones, índices y planes de ejecución.",
-        "Incorporación de EF Core Database First y pruebas automatizadas con xUnit, Moq y FluentAssertions."
+        "Incorporación de EF Core Database First y pruebas automatizadas con xUnit, Moq y FluentAssertions.",
+        "Evolución de una API .NET 8 para el dominio de vuelos, contratación y gestión de riesgo."
       ],
       "technologies": [".NET 8", "SQL Server", "T-SQL", "EF Core DB First", "xUnit"]
     },
@@ -94,8 +94,8 @@
       "dates": "may 2022 — jun 2025",
       "team": "Equipo: 3 backend · 1 frontend · 1 UX · 2 QA",
       "bullets": [
-        "Desarrollo y mantenimiento del backend de suscripciones para una plataforma OTT de contenidos y directos deportivos.",
         "Evolución de APIs, procesos e integraciones de facturación y pago con Stripe, Zuora y las tiendas de Apple y Google.",
+        "Desarrollo y mantenimiento del backend de suscripciones para una plataforma OTT de contenidos y directos deportivos.",
         "Trabajo distribuido con observabilidad, caché, despliegues contenerizados y pipelines de Azure DevOps."
       ],
       "technologies": ["Dapper", "Redis", "Zuora", "Stripe", "Docker", "Kubernetes", "Azure DevOps"]
@@ -107,10 +107,10 @@
       "dates": "ene 2019 — abr 2022",
       "team": "Equipo: 2 backend · 1 frontend · 1 QA",
       "bullets": [
-        "Desarrollo de nuevas funcionalidades y resolución de incidencias para los servicios del grupo educativo SEK.",
-        "Implantación de un pipeline completo de CI/CD en Azure DevOps para compilar, probar y desplegar.",
+        "Responsable backend de la nueva API de admisiones de UCJC: análisis, cliente y coordinación con frontend.",
         "Refactorización integral de una API legacy y creación de paquetes NuGet internos para compartir código entre microservicios.",
-        "Responsable backend de la nueva API de admisiones de UCJC: análisis, cliente y coordinación con frontend."
+        "Implantación de un pipeline completo de CI/CD en Azure DevOps para compilar, probar y desplegar.",
+        "Desarrollo de nuevas funcionalidades y resolución de incidencias para los servicios del grupo educativo SEK."
       ],
       "technologies": ["Azure DevOps", "CI/CD", "NuGet", "Docker", "Kubernetes", "Salesforce"]
     }
@@ -157,5 +157,5 @@
     "Español · Nativo",
     "Inglés · B1 Cambridge PET (2017)"
   ],
-  "work_style": "Automatización · Refactorización responsable · Coordinación con producto, QA y frontend"
+  "work_style": "Automatización · Mejora continua · Coordinación con producto, frontend, QA y negocio"
 }

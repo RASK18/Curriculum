@@ -65,7 +65,6 @@ def render_project(project: dict, accent: str) -> str:
           <p class="date-badge">{esc(project['dates'])}</p>
         </div>
         <ul>{bullets}</ul>
-        <p class="team">{esc(project['team'])}</p>
         <p class="tech-line"><strong>Tecnologías:</strong> {tech_line(project['technologies'])}</p>
       </article>
     """
@@ -245,6 +244,8 @@ def render_html(data: dict) -> str:
           </nav>
         </header>
 
+        {render_sidebar_page_one(data)}
+
         <div class="main-content">
           <section aria-labelledby="experiencia-v2">
             <h2 class="section-banner" id="experiencia-v2">Experiencia profesional</h2>
@@ -266,8 +267,6 @@ def render_html(data: dict) -> str:
             </section>
           </div>
         </div>
-
-        {render_sidebar_page_one(data)}
       </div>
 
       <footer class="bottom-strip">

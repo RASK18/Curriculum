@@ -135,6 +135,31 @@ def validate_pdf(data: dict, pdf_path: Path) -> None:
         expected_value = re.sub(r"\s+", " ", value).casefold()
         assert_true(expected_value in normalized, f"Falta contenido esencial en PDF: {value}")
 
+    if data["meta"].get("layout") == "tech-panel":
+        layout_text = "\n".join(
+            page.extract_text(extraction_mode="layout") or "" for page in reader.pages
+        )
+        normalized_layout = re.sub(r"\s+", " ", layout_text).casefold()
+        reading_anchors = [
+            data["person"]["name"],
+            data["person"]["availability"],
+            *(project["name"] for project in data["projects"]),
+            *(job["company"] for job in data["earlier_experience"]),
+            data["education"][1]["institution"].split(" · ")[0],
+            "Idiomas",
+            "Certificaciones",
+        ]
+        anchor_positions = []
+        for value in reading_anchors:
+            expected_value = re.sub(r"\s+", " ", value).casefold()
+            position = normalized_layout.find(expected_value)
+            assert_true(position >= 0, f"Falta un ancla de lectura en PDF: {value}")
+            anchor_positions.append(position)
+        assert_true(
+            anchor_positions == sorted(anchor_positions),
+            "El orden geométrico de lectura del PDF v2 no es coherente",
+        )
+
     links = []
     for page in reader.pages:
         for annotation_ref in page.get("/Annots", []):
