@@ -72,8 +72,14 @@ def validate_html(data: dict, html_path: Path) -> None:
         *(certification["title"] for certification in data["certifications"]),
         *(certification["status"] for certification in data["certifications"]),
     ]
+    expected.extend(
+        item
+        for group in data.get("stack_groups", [])
+        for item in group["items"]
+    )
     for value in expected:
         assert_true(value in text, f"Falta contenido esencial en HTML: {value}")
+    assert_true("no vigente" not in text.casefold(), "No debe mostrarse el estado de caducidad")
 
     for target in re.findall(r'(?:src|href)="([^"]+)"', markup):
         if target.startswith(("http://", "https://", "mailto:", "tel:", "#")):
@@ -88,7 +94,6 @@ def validate_html(data: dict, html_path: Path) -> None:
         font_dir = page_dir / "assets" / "fonts" / "roboto-condensed"
         assert_true((font_dir / "RobotoCondensed-Variable.ttf").exists(), "Falta Roboto Condensed local")
         assert_true((font_dir / "OFL.txt").exists(), "Falta la licencia OFL de Roboto Condensed")
-        assert_true("no vigente" not in text.casefold(), "La v2 no debe mostrar el estado de caducidad")
 
 
 def validate_css(css_path: Path = CSS_PATH, layout: str = "editorial") -> None:
@@ -109,6 +114,10 @@ def validate_css(css_path: Path = CSS_PATH, layout: str = "editorial") -> None:
 
 def validate_pdf(data: dict, pdf_path: Path) -> None:
     reader = PdfReader(str(pdf_path))
+    assert_true(
+        reader.trailer["/Root"].get("/StructTreeRoot") is not None,
+        "El PDF debe conservar una estructura etiquetada para accesibilidad",
+    )
     expected_pages = data["meta"].get("pages", 2)
     assert_true(
         len(reader.pages) == expected_pages,
@@ -134,6 +143,42 @@ def validate_pdf(data: dict, pdf_path: Path) -> None:
     for value in expected:
         expected_value = re.sub(r"\s+", " ", value).casefold()
         assert_true(expected_value in normalized, f"Falta contenido esencial en PDF: {value}")
+
+    if data["meta"].get("layout", "editorial") == "editorial":
+        page_one = re.sub(r"\s+", " ", reader.pages[0].extract_text() or "").casefold()
+        page_two = re.sub(r"\s+", " ", reader.pages[1].extract_text() or "").casefold()
+        page_one_anchors = [
+            data["person"]["name"],
+            data["person"]["availability"],
+            "Perfil",
+            data["projects"][0]["name"],
+            data["projects"][1]["name"],
+            "Stack por áreas",
+        ]
+        page_two_anchors = [
+            "Trayectoria profesional",
+            "Experiencia por proyectos",
+            data["projects"][2]["name"],
+            "Experiencia anterior",
+            *(job["company"] for job in data["earlier_experience"]),
+            "Formación",
+            data["certifications"][0]["title"],
+            "Idiomas",
+        ]
+        for page_text, anchors, page_number in (
+            (page_one, page_one_anchors, 1),
+            (page_two, page_two_anchors, 2),
+        ):
+            positions = []
+            for value in anchors:
+                expected_value = re.sub(r"\s+", " ", value).casefold()
+                position = page_text.find(expected_value)
+                assert_true(position >= 0, f"Falta un ancla de lectura en PDF (página {page_number}): {value}")
+                positions.append(position)
+            assert_true(
+                positions == sorted(positions),
+                f"El orden de lectura del PDF editorial no es coherente en la página {page_number}",
+            )
 
     if data["meta"].get("layout") == "tech-panel":
         layout_text = "\n".join(
@@ -204,6 +249,12 @@ def validate_v2_contrast() -> None:
 
 def main() -> None:
     data = json.loads(DATA_PATH.read_text(encoding="utf-8"))
+    v1_data = json.loads((VERSION_DATA_DIR / "v1.json").read_text(encoding="utf-8"))
+    assert_true(
+        {key: value for key, value in data.items() if key != "meta"}
+        == {key: value for key, value in v1_data.items() if key != "meta"},
+        "La versión publicada y la v1 deben compartir exactamente el mismo contenido",
+    )
     assert_true(not (DOCS / "CNAME").exists(), "El project site no debe incluir CNAME")
     validate_html(data, HTML_PATH)
     validate_css()

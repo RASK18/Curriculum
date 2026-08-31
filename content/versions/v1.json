@@ -16,9 +16,9 @@
     "phone_href": "+34679533206",
     "linkedin_display": "linkedin.com/in/rafaelja",
     "linkedin_href": "https://www.linkedin.com/in/rafaelja",
-    "availability": "Remoto prioritario · Híbrido negociable hasta 2 días presenciales por semana cerca de Boadilla del Monte"
+    "availability": "Modalidad objetivo: remoto"
   },
-  "profile": "Backend .NET con más de 8 años de experiencia desarrollando y modernizando APIs, automatizando entregas y resolviendo lógica de negocio compleja junto a equipos de producto. Especializado en C#, SQL Server, diseño REST y mejora continua de sistemas con legado.",
+  "profile": "Ingeniero backend .NET con más de 8 años modernizando APIs y resolviendo lógica de negocio compleja. Especializado en C#, SQL Server, diseño REST, automatización de entregas y mejora continua de sistemas con legado.",
   "stack": [
     "C#",
     ".NET / ASP.NET Core",
@@ -32,6 +32,28 @@
     "Git",
     "xUnit"
   ],
+  "stack_groups": [
+    {
+      "title": "Backend",
+      "items": ["C#", ".NET / ASP.NET Core", "REST APIs", "Entity Framework Core", "Dapper", "MediatR"]
+    },
+    {
+      "title": "Datos",
+      "items": ["SQL Server", "T-SQL", "Stored procedures", "Índices", "Planes de ejecución", "Redis"]
+    },
+    {
+      "title": "Arquitectura",
+      "items": ["Microservicios", "EF Core Database First", "Paquetes NuGet internos"]
+    },
+    {
+      "title": "Cloud & DevOps",
+      "items": ["Azure DevOps", "CI/CD", "Docker", "Kubernetes", "Git"]
+    },
+    {
+      "title": "Testing & observabilidad",
+      "items": ["xUnit", "Moq", "FluentAssertions", "Serilog", "Swagger", "Prometheus"]
+    }
+  ],
   "projects": [
     {
       "name": "Viajes El Corte Inglés · Vuelos",
@@ -40,9 +62,9 @@
       "dates": "jul 2025 — actualidad",
       "team": "Equipo: 2 backend, 1 frontend y 3 perfiles de negocio/pruebas",
       "bullets": [
-        "Evolución de una API en .NET 8 para el dominio de vuelos, contratación y gestión de riesgo.",
         "Trabajo intensivo con SQL Server sobre stored procedures, funciones, índices y planes de ejecución.",
-        "Incorporación de Entity Framework Core con enfoque Database First y pruebas automatizadas con xUnit, Moq y FluentAssertions."
+        "Incorporación de Entity Framework Core con enfoque Database First y pruebas automatizadas con xUnit, Moq y FluentAssertions.",
+        "Evolución de una API en .NET 8 para el dominio de vuelos, contratación y gestión de riesgo."
       ],
       "technologies": ["C#", ".NET 8", "ASP.NET Core", "SQL Server", "EF Core", "xUnit", "Serilog", "Swagger", "Prometheus"]
     },
@@ -53,8 +75,8 @@
       "dates": "may 2022 — jun 2025",
       "team": "Equipo: 3 backend, 1 frontend, 1 UX y 2 QA",
       "bullets": [
-        "Desarrollo y mantenimiento del backend de suscripciones para una plataforma OTT de contenidos y directos deportivos.",
         "Evolución de APIs, procesos e integraciones de facturación y pago con Stripe, Zuora y las tiendas de Apple y Google.",
+        "Desarrollo y mantenimiento del backend de suscripciones para una plataforma OTT de contenidos y directos deportivos.",
         "Trabajo en un entorno distribuido con observabilidad, caché, despliegues contenerizados y pipelines de Azure DevOps."
       ],
       "technologies": ["C#", ".NET", "SQL Server", "EF Core", "Dapper", "Redis", "MediatR", "Azure DevOps", "Docker", "Kubernetes"]
@@ -66,10 +88,10 @@
       "dates": "ene 2019 — abr 2022",
       "team": "Equipo: 2 backend, 1 frontend y 1 QA",
       "bullets": [
-        "Desarrollo de nuevas funcionalidades y resolución de incidencias para los servicios del grupo educativo SEK.",
-        "Implantación de un pipeline completo de CI/CD en Azure DevOps para compilar, probar y desplegar con menos pasos manuales.",
+        "Responsable backend de la nueva API de admisiones de UCJC: análisis, interlocución con cliente y coordinación del contrato con frontend.",
         "Refactorización integral de una API legacy y creación de paquetes NuGet internos para compartir código entre microservicios.",
-        "Responsable backend de la nueva API de admisiones de UCJC: análisis, interlocución con cliente y coordinación del contrato con frontend."
+        "Implantación de un pipeline completo de CI/CD en Azure DevOps para compilar, probar y desplegar con menos pasos manuales.",
+        "Desarrollo de nuevas funcionalidades y resolución de incidencias para los servicios del grupo educativo SEK."
       ],
       "technologies": ["C#", ".NET Core", "REST", "Azure DevOps", "CI/CD", "NuGet", "Docker", "Kubernetes", "Salesforce"]
     }
@@ -105,16 +127,16 @@
   "certifications": [
     {
       "title": "CompTIA Security+ ce",
-      "status": "Credencial histórica: obtenida en 2017, no vigente desde 2020"
+      "status": "2017"
     },
     {
       "title": "Certified Ethical Hacker (CEH)",
-      "status": "Credencial histórica: obtenida en 2018, no vigente desde 2021"
+      "status": "2018"
     }
   ],
   "languages": [
     "Español · Nativo",
     "Inglés · B1 Cambridge PET (2017)"
   ],
-  "work_style": "Mejora continua orientada a reducir trabajo manual y deuda técnica: automatización, refactorización y limpieza de código, coordinando contratos, pruebas y despliegues con el equipo."
+  "work_style": "Automatización · Mejora continua · Coordinación con producto, frontend, QA y negocio"
 }
