@@ -49,6 +49,12 @@
       "items": ["SQL Server", "T-SQL", "stored procedures", "índices", "planes de ejecución", "Redis"]
     },
     {
+      "title": "Arquitectura",
+      "icon": "workflow",
+      "accent": "blue",
+      "items": ["Microservicios", "EF Core Database First", "paquetes NuGet internos"]
+    },
+    {
       "title": "Cloud & DevOps",
       "icon": "cloud",
       "accent": "purple",
@@ -62,7 +68,7 @@
     },
     {
       "title": "Integraciones",
-      "icon": "workflow",
+      "icon": "external-link",
       "accent": "orange",
       "items": ["Stripe", "Zuora", "Apple / Google stores", "Salesforce"]
     }
@@ -79,7 +85,7 @@
         "Trabajo intensivo con SQL Server sobre stored procedures, funciones, índices y planes de ejecución.",
         "Incorporación de EF Core Database First y pruebas automatizadas con xUnit, Moq y FluentAssertions."
       ],
-      "technologies": [".NET 8", "SQL Server avanzado", "EF Core DB First", "xUnit"]
+      "technologies": [".NET 8", "SQL Server", "T-SQL", "EF Core DB First", "xUnit"]
     },
     {
       "name": "LaLiga SportsTV · Suscripciones",

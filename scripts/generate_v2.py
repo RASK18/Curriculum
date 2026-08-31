@@ -1,9 +1,11 @@
 from __future__ import annotations
 
 import html
+import hashlib
 import json
 import shutil
 import subprocess
+import tempfile
 from pathlib import Path
 from typing import Iterable
 
@@ -103,8 +105,9 @@ def render_sidebar_page_one(data: dict) -> str:
       <aside class="sidebar" aria-label="Perfil y stack técnico">
         <div class="monogram-wrap" aria-hidden="true">
           <div class="monogram">
-            <span class="monogram-r">R</span>
-            <span class="monogram-j">J</span>
+            <span class="monogram-letters">
+              <span class="monogram-r">R</span><span class="monogram-j">J</span>
+            </span>
           </div>
         </div>
         <section class="side-section" aria-labelledby="perfil-v2">
@@ -152,8 +155,9 @@ def render_sidebar_page_two(data: dict) -> str:
       <aside class="sidebar" aria-label="Formación, idiomas y certificaciones">
         <div class="monogram-wrap" aria-hidden="true">
           <div class="monogram">
-            <span class="monogram-r">R</span>
-            <span class="monogram-j">J</span>
+            <span class="monogram-letters">
+              <span class="monogram-r">R</span><span class="monogram-j">J</span>
+            </span>
           </div>
         </div>
         <section class="side-section" aria-labelledby="idiomas-v2">
@@ -177,6 +181,7 @@ def render_sidebar_page_two(data: dict) -> str:
 
 
 def render_html(data: dict) -> str:
+    style_revision = hashlib.sha256(STYLE_PATH.read_bytes()).hexdigest()[:12]
     person = data["person"]
     first_name, surnames = split_name(person["name"])
     projects = data["projects"]
@@ -218,16 +223,12 @@ def render_html(data: dict) -> str:
   <meta name="cv-status" content="{esc(data['meta']['status'])}">
   <meta name="robots" content="noindex,nofollow,noarchive">
   <link rel="canonical" href="{esc(data['meta']['canonical'])}">
-  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="assets/icons/code-xml.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css?v={style_revision}">
   <title>{esc(person['name'])} · {esc(person['title'])}</title>
 </head>
 <body>
   <a class="skip-link" href="#contenido">Saltar al contenido</a>
-  <nav class="screen-toolbar" aria-label="Acciones del currículum">
-    <a class="toolbar-link" href="{esc(data['meta']['pdf_filename'])}" download>
-      {icon('download')} Descargar PDF
-    </a>
-  </nav>
 
   <main class="cv" id="contenido">
     <article class="page" aria-label="Currículum v2 de una página">
@@ -237,9 +238,12 @@ def render_html(data: dict) -> str:
           <p class="role">{esc(person['title'])}</p>
           {render_contact(person)}
           <p class="availability">{icon('house')}{esc(person['availability'])}</p>
+          <nav class="screen-toolbar" aria-label="Acciones del currículum">
+            <a class="toolbar-link" href="{esc(data['meta']['pdf_filename'])}" download>
+              {icon('download')} Descargar PDF
+            </a>
+          </nav>
         </header>
-
-        {render_sidebar_page_one(data)}
 
         <div class="main-content">
           <section aria-labelledby="experiencia-v2">
@@ -262,6 +266,8 @@ def render_html(data: dict) -> str:
             </section>
           </div>
         </div>
+
+        {render_sidebar_page_one(data)}
       </div>
 
       <footer class="bottom-strip">
@@ -283,10 +289,10 @@ def render_html(data: dict) -> str:
 
 def find_chrome() -> Path:
     candidates = [
-        Path(r"C:\Program Files\Google\Chrome\Application\chrome.exe"),
-        Path(r"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"),
         Path(r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"),
         Path(r"C:\Program Files\Microsoft\Edge\Application\msedge.exe"),
+        Path(r"C:\Program Files\Google\Chrome\Application\chrome.exe"),
+        Path(r"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"),
     ]
     for candidate in candidates:
         if candidate.exists():
@@ -296,10 +302,9 @@ def find_chrome() -> Path:
 
 def generate_pdf(html_path: Path, pdf_path: Path) -> None:
     chrome = find_chrome()
-    profile_dir = ROOT / "tmp" / "chrome-v2-profile"
-    if profile_dir.exists():
-        shutil.rmtree(profile_dir)
-    profile_dir.mkdir(parents=True)
+    profile_parent = ROOT / "tmp"
+    profile_parent.mkdir(parents=True, exist_ok=True)
+    profile_dir = Path(tempfile.mkdtemp(prefix="chrome-v2-", dir=profile_parent))
     command = [
         str(chrome),
         "--headless=new",

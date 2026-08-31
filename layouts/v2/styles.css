@@ -63,10 +63,10 @@ a {
 }
 
 .screen-toolbar {
-  position: fixed;
-  z-index: 50;
-  top: 1rem;
-  right: 1rem;
+  position: absolute;
+  z-index: 5;
+  right: 7.5mm;
+  bottom: 2.5mm;
   padding: 0;
 }
 
@@ -74,13 +74,13 @@ a {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.62rem 0.9rem;
+  padding: 0.38rem 0.65rem;
   border: 1px solid rgb(255 255 255 / 28%);
   border-radius: 999px;
   background: rgb(4 20 44 / 96%);
-  box-shadow: 0 0.35rem 1.3rem rgb(4 20 44 / 24%);
+  box-shadow: 0 0.2rem 0.7rem rgb(4 20 44 / 18%);
   color: #fff;
-  font-size: 0.84rem;
+  font-size: 0.68rem;
   font-weight: 700;
   text-decoration: none;
 }
@@ -192,9 +192,13 @@ a {
   content: none;
 }
 
-.monogram span {
+.monogram-letters {
   position: absolute;
   z-index: 1;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-family: "Roboto Condensed CV", "Arial Narrow", sans-serif;
   font-weight: 900;
   line-height: 1;
@@ -202,21 +206,21 @@ a {
   transform: skewX(-7deg);
 }
 
+.monogram-letters span {
+  position: static;
+  display: block;
+  line-height: inherit;
+}
+
 .monogram-r {
-  top: 4.4mm;
-  left: 5.5mm;
   color: #fff;
   font-size: 4.25rem;
-  letter-spacing: -0.13em;
 }
 
 .monogram-j {
-  z-index: 2;
-  top: 5.6mm;
-  left: 15.2mm;
   color: #72e7ef;
   font-size: 4.25rem;
-  letter-spacing: -0.09em;
+  margin-left: -0.08em;
 }
 
 .side-section + .side-section {
@@ -261,8 +265,13 @@ a {
 .stack-groups {
   display: grid;
   flex: 1;
-  align-content: space-between;
+  grid-auto-rows: 1fr;
+  align-content: stretch;
   gap: 0;
+  overflow: hidden;
+  border: 1px solid rgb(255 255 255 / 18%);
+  border-radius: 2mm;
+  background: rgb(3 24 51 / 34%);
 }
 
 .side-section--stack {
@@ -275,14 +284,15 @@ a {
 .stack-group {
   display: grid;
   grid-template-columns: 8.5mm 1fr;
+  align-content: center;
+  align-items: center;
   gap: 2.3mm;
-  padding-bottom: 3.1mm;
+  padding: 2.2mm 2mm;
   border-bottom: 1px solid rgb(255 255 255 / 18%);
 }
 
 .stack-group:last-child {
   border-bottom: 0;
-  padding-bottom: 0;
 }
 
 .stack-icon {
@@ -346,6 +356,7 @@ a {
 }
 
 .main-header {
+  position: relative;
   grid-column: 2;
   grid-row: 1;
   min-height: 55mm;
@@ -920,7 +931,7 @@ a {
 
   .cv {
     display: block;
-    padding: 0 0 5.5rem;
+    padding: 0;
   }
 
   .page {
@@ -941,7 +952,7 @@ a {
 
   .sidebar {
     display: block;
-    order: 2;
+    order: 3;
     width: 100%;
     padding: 2rem clamp(1.1rem, 5vw, 3rem);
   }
@@ -953,7 +964,7 @@ a {
   }
 
   .main-content {
-    order: 3;
+    order: 2;
     padding: 1rem clamp(1.1rem, 5vw, 3rem) 2.5rem;
   }
 
@@ -968,8 +979,8 @@ a {
   }
 
   .contact-list li,
-  .contact-list li:first-child,
-  .contact-list li:last-child {
+  .contact-list li:nth-child(odd),
+  .contact-list li:nth-child(even) {
     border: 0;
     padding: 0;
   }
@@ -1045,13 +1056,28 @@ a {
 
   .stack-groups {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1rem;
+    grid-auto-rows: 1fr;
+    gap: 0;
+    overflow: hidden;
+    border: 1px solid rgb(255 255 255 / 18%);
+    border-radius: 0.55rem;
+    background: rgb(3 24 51 / 34%);
   }
 
   .stack-group {
-    border: 1px solid rgb(255 255 255 / 18%);
-    border-radius: 0.55rem;
+    border: 0;
+    border-right: 1px solid rgb(255 255 255 / 18%);
+    border-bottom: 1px solid rgb(255 255 255 / 18%);
+    border-radius: 0;
     padding: 0.75rem;
+  }
+
+  .stack-group:nth-child(2n) {
+    border-right: 0;
+  }
+
+  .stack-group:nth-last-child(-n + 2) {
+    border-bottom: 0;
   }
 
   .stack-group h3 {
@@ -1090,16 +1116,19 @@ a {
   }
 
   .screen-toolbar {
-    top: auto;
-    right: 1rem;
-    bottom: 1rem;
+    position: static;
+    width: max-content;
+    margin-top: 0.75rem;
+  }
+
+  .toolbar-link {
+    font-size: 0.78rem;
   }
 }
 
 @media screen and (max-width: 520px) {
   .screen-toolbar {
-    right: 1rem;
-    left: 1rem;
+    width: 100%;
   }
 
   .toolbar-link {
@@ -1129,8 +1158,50 @@ a {
     grid-template-columns: 1fr;
   }
 
+  .contact-list {
+    font-size: 0.8rem;
+  }
+
+  .stack-group,
+  .stack-group:nth-child(2n),
+  .stack-group:nth-last-child(-n + 2) {
+    border-right: 0;
+    border-bottom: 1px solid rgb(255 255 255 / 18%);
+  }
+
+  .stack-group:last-child {
+    border-bottom: 0;
+  }
+
   .education-card > span {
     justify-self: start;
+  }
+
+  .job,
+  .education-card {
+    padding: 0.85rem;
+  }
+
+  .job h3,
+  .education-card h3 {
+    font-size: 0.86rem;
+  }
+
+  .job .job-role,
+  .job .job-date,
+  .education-card p,
+  .education-card > span {
+    font-size: 0.72rem;
+  }
+
+  .job .job-date {
+    top: 0.85rem;
+    right: 0.85rem;
+  }
+
+  .job-summary {
+    font-size: 0.72rem;
+    line-height: 1.45;
   }
 
   .date-badge {

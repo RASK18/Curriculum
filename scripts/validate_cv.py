@@ -4,7 +4,7 @@ import html
 import json
 import re
 from pathlib import Path
-from urllib.parse import unquote
+from urllib.parse import unquote, urlsplit
 
 from pypdf import PdfReader
 
@@ -78,7 +78,7 @@ def validate_html(data: dict, html_path: Path) -> None:
     for target in re.findall(r'(?:src|href)="([^"]+)"', markup):
         if target.startswith(("http://", "https://", "mailto:", "tel:", "#")):
             continue
-        local = page_dir / unquote(target)
+        local = page_dir / unquote(urlsplit(target).path)
         assert_true(local.exists(), f"Recurso relativo inexistente: {target}")
 
     for icon_name in ("download", "mail", "phone", "map-pin", "external-link"):
