@@ -19,6 +19,24 @@ ASSET_SOURCE = ROOT / "assets" / "lucide"
 FONT_SOURCE = ROOT / "assets" / "fonts" / "roboto-condensed"
 OUTPUT_DIR = ROOT / "docs" / "v2"
 PDF_NAME = "Rafael-Jimenez-CV.pdf"
+V2_ICONS = (
+    "briefcase-business",
+    "clock-3",
+    "cloud",
+    "code-xml",
+    "database",
+    "download",
+    "external-link",
+    "graduation-cap",
+    "house",
+    "mail",
+    "map-pin",
+    "phone",
+    "shield-check",
+    "test-tube",
+    "user-round",
+    "workflow",
+)
 
 
 def esc(value: str) -> str:
@@ -117,60 +135,6 @@ def render_sidebar_page_one(data: dict) -> str:
           <div class="stack-groups">{render_stack_groups(data['stack_groups'])}</div>
         </section>
         <section class="side-section side-section--work" aria-labelledby="trabajo-v2">
-          <h2 class="side-heading" id="trabajo-v2">{icon('workflow')}<span>Forma de trabajar</span></h2>
-          <p class="work-style">{esc(data['work_style'])}</p>
-        </section>
-      </aside>
-    """
-
-
-def render_sidebar_page_two(data: dict) -> str:
-    education = "".join(
-        f"""
-        <li class="education-item">
-          {icon('graduation-cap')}
-          <strong>{esc(item['title'])}</strong>
-          <span>{esc(item['institution'])}<br>{esc(item['dates'])}</span>
-        </li>
-        """
-        for item in data["education"]
-    )
-    certifications = "".join(
-        f"""
-        <li class="cert-item">
-          {icon('shield-check')}
-          <strong>{esc(item['title'])}</strong>
-          <span class="cert-status">{esc(item['status'])}</span>
-        </li>
-        """
-        for item in data["certifications"]
-    )
-    languages = "".join(
-        f"<li class=\"info-item\">{icon('languages')}<strong>{esc(item)}</strong></li>"
-        for item in data["languages"]
-    )
-    return f"""
-      <aside class="sidebar" aria-label="Formación, idiomas y certificaciones">
-        <div class="monogram-wrap" aria-hidden="true">
-          <div class="monogram">
-            <span class="monogram-letters">
-              <span class="monogram-r">R</span><span class="monogram-j">J</span>
-            </span>
-          </div>
-        </div>
-        <section class="side-section" aria-labelledby="idiomas-v2">
-          <h2 class="side-heading" id="idiomas-v2">{icon('languages')}<span>Idiomas</span></h2>
-          <ul class="info-list">{languages}</ul>
-        </section>
-        <section class="side-section" aria-labelledby="formacion-v2">
-          <h2 class="side-heading" id="formacion-v2">{icon('graduation-cap')}<span>Formación</span></h2>
-          <ul class="education-list">{education}</ul>
-        </section>
-        <section class="side-section" aria-labelledby="certificaciones-v2">
-          <h2 class="side-heading" id="certificaciones-v2">{icon('shield-check')}<span>Seguridad</span></h2>
-          <ul class="cert-list">{certifications}</ul>
-        </section>
-        <section class="side-section" aria-labelledby="trabajo-v2">
           <h2 class="side-heading" id="trabajo-v2">{icon('workflow')}<span>Forma de trabajar</span></h2>
           <p class="work-style">{esc(data['work_style'])}</p>
         </section>
@@ -341,7 +305,11 @@ def main() -> None:
     html_path = OUTPUT_DIR / "index.html"
     html_path.write_text(markup, encoding="utf-8", newline="\n")
     shutil.copy2(STYLE_PATH, OUTPUT_DIR / "styles.css")
-    shutil.copytree(ASSET_SOURCE / "icons", OUTPUT_DIR / "assets" / "icons", dirs_exist_ok=True)
+    icon_output = OUTPUT_DIR / "assets" / "icons"
+    shutil.rmtree(icon_output, ignore_errors=True)
+    icon_output.mkdir(parents=True, exist_ok=True)
+    for icon_name in V2_ICONS:
+        shutil.copy2(ASSET_SOURCE / "icons" / f"{icon_name}.svg", icon_output / f"{icon_name}.svg")
     shutil.copy2(ASSET_SOURCE / "LUCIDE-LICENSE.txt", OUTPUT_DIR / "assets" / "LUCIDE-LICENSE.txt")
     shutil.copytree(FONT_SOURCE, OUTPUT_DIR / "assets" / "fonts" / "roboto-condensed", dirs_exist_ok=True)
 

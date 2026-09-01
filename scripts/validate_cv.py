@@ -110,6 +110,10 @@ def validate_html(data: dict, html_path: Path, pdf_href: str = PDF_NAME) -> None
 
     for icon_name in ("download", "mail", "phone", "map-pin", "external-link"):
         assert_true((page_dir / "assets" / "icons" / f"{icon_name}.svg").exists(), f"Falta icono Lucide: {icon_name}")
+    combined_assets_markup = markup + "\n" + (page_dir / "styles.css").read_text(encoding="utf-8")
+    for icon_path in (page_dir / "assets" / "icons").glob("*.svg"):
+        relative_icon = f"assets/icons/{icon_path.name}"
+        assert_true(relative_icon in combined_assets_markup, f"Icono publicado sin uso: {relative_icon}")
     assert_true((page_dir / "assets" / "LUCIDE-LICENSE.txt").exists(), "Falta la licencia de Lucide")
     if data["meta"].get("layout") == "tech-panel":
         font_dir = page_dir / "assets" / "fonts" / "roboto-condensed"
