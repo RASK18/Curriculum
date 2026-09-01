@@ -71,6 +71,12 @@ def validate_html(data: dict, html_path: Path, pdf_href: str = PDF_NAME) -> None
     assert_true(f'href="{data["meta"]["canonical"]}"' in markup, "Canonical incorrecta")
     assert_true(f'href="{pdf_href}"' in markup, "El enlace al PDF no es el esperado")
     assert_true("<svg" not in markup.lower(), "El HTML no debe contener SVG dibujado manualmente")
+    toolbar_position = markup.find('<nav class="screen-toolbar"')
+    cv_position = markup.find('<main class="cv"')
+    assert_true(
+        0 <= toolbar_position < cv_position,
+        "El botón de descarga debe estar fuera de la hoja del currículum",
+    )
     if data["meta"].get("version"):
         assert_true(
             f'content="{data["meta"]["version"]}"' in markup,
@@ -165,6 +171,7 @@ def validate_pdf(data: dict, pdf_path: Path) -> None:
         *(certification["status"] for certification in data["certifications"]),
     ]
     normalized = re.sub(r"\s+", " ", extracted).casefold()
+    assert_true("descargar pdf" not in normalized, "El control de descarga no debe aparecer dentro del PDF")
     for value in expected:
         expected_value = re.sub(r"\s+", " ", value).casefold()
         assert_true(expected_value in normalized, f"Falta contenido esencial en PDF: {value}")

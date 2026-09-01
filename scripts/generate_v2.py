@@ -191,6 +191,11 @@ def render_html(data: dict) -> str:
 </head>
 <body>
   <a class="skip-link" href="#contenido">Saltar al contenido</a>
+  <nav class="screen-toolbar" aria-label="Acciones del currículum">
+    <a class="toolbar-link" href="{esc(data['meta']['pdf_filename'])}" download>
+      {icon('download')} Descargar PDF
+    </a>
+  </nav>
 
   <main class="cv" id="contenido">
     <article class="page" aria-label="Currículum v2 de una página">
@@ -200,11 +205,6 @@ def render_html(data: dict) -> str:
           <p class="role">{esc(person['title'])}</p>
           {render_contact(person)}
           <p class="availability">{icon('house')}{esc(person['availability'])}</p>
-          <nav class="screen-toolbar" aria-label="Acciones del currículum">
-            <a class="toolbar-link" href="{esc(data['meta']['pdf_filename'])}" download>
-              {icon('download')} Descargar PDF
-            </a>
-          </nav>
         </header>
 
         {render_sidebar_page_one(data)}

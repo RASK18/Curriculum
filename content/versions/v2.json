@@ -26,7 +26,7 @@
     "C#",
     ".NET / ASP.NET Core",
     "SQL Server",
-    "Entity Framework Core",
+    "Entity Framework",
     "REST APIs",
     "Azure DevOps",
     "CI/CD",
@@ -40,7 +40,7 @@
       "title": "Backend",
       "icon": "code-xml",
       "accent": "cyan",
-      "items": ["C#", ".NET / ASP.NET Core", "REST APIs", "Entity Framework Core", "Dapper", "MediatR"]
+      "items": ["C#", ".NET / ASP.NET Core", "REST APIs", "Entity Framework", "Dapper", "MediatR"]
     },
     {
       "title": "Datos",
@@ -52,7 +52,7 @@
       "title": "Arquitectura",
       "icon": "workflow",
       "accent": "blue",
-      "items": ["Microservicios", "EF Core Database First", "paquetes NuGet internos"]
+      "items": ["Microservicios", "paquetes NuGet internos"]
     },
     {
       "title": "Cloud & DevOps",

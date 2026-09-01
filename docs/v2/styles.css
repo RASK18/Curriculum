@@ -63,11 +63,13 @@ a {
 }
 
 .screen-toolbar {
-  position: absolute;
-  z-index: 5;
-  right: 7.5mm;
-  bottom: 2.5mm;
-  padding: 0;
+  position: relative;
+  z-index: 10;
+  display: flex;
+  justify-content: flex-end;
+  width: min(210mm, calc(100% - 28px));
+  margin: 0 auto;
+  padding: 12px 0 0;
 }
 
 .toolbar-link {
@@ -100,7 +102,7 @@ a {
 .cv {
   display: grid;
   justify-content: center;
-  padding: 14mm 0 20mm;
+  padding: 4mm 0 20mm;
 }
 
 .page {
@@ -905,12 +907,20 @@ a {
 }
 
 @media screen and (min-width: 1000px) {
+  .screen-toolbar {
+    width: min(226.8mm, calc(100% - 28px));
+  }
+
   .page {
     zoom: 1.08;
   }
 }
 
 @media screen and (min-width: 1280px) {
+  .screen-toolbar {
+    width: min(239.4mm, calc(100% - 28px));
+  }
+
   .page {
     zoom: 1.14;
   }
@@ -1137,9 +1147,10 @@ a {
   }
 
   .screen-toolbar {
-    position: static;
-    width: max-content;
-    margin-top: 0.75rem;
+    width: 100%;
+    margin: 0;
+    padding: 0.65rem 0.8rem;
+    background: var(--navy-950);
   }
 
   .toolbar-link {
