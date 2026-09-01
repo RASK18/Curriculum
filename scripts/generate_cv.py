@@ -12,12 +12,13 @@ from pypdf import PdfReader
 
 
 ROOT = Path(__file__).resolve().parents[1]
-DATA_PATH = ROOT / "content" / "resume.json"
+CURRENT_PATH = ROOT / "content" / "current.json"
 VERSION_DATA_DIR = ROOT / "content" / "versions"
+STYLE_PATH = ROOT / "layouts" / "v1" / "styles.css"
+ASSET_SOURCE = ROOT / "assets" / "lucide"
 DOCS = ROOT / "docs"
 PDF_NAME = "Rafael-Jimenez-CV.pdf"
-PDF_PATH = DOCS / PDF_NAME
-OUTPUT_PDF = ROOT / "output" / "pdf" / PDF_NAME
+V1_ICONS = ("download", "external-link", "mail", "map-pin", "phone")
 
 def esc(value: str) -> str:
     return html.escape(value, quote=True)
@@ -207,6 +208,25 @@ def render_html(data: dict) -> str:
 """
 
 
+def render_redirect(version_id: str, data: dict) -> str:
+    target = f"{version_id}/"
+    return f"""<!doctype html>
+<html lang="{esc(data['meta']['language'])}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <meta http-equiv="refresh" content="0; url={esc(target)}">
+  <link rel="canonical" href="{esc(data['meta']['canonical'])}">
+  <title>{esc(data['person']['name'])} · Currículum</title>
+</head>
+<body>
+  <p>Redirigiendo al currículum actual. <a href="{esc(target)}">Continuar a {esc(version_id)}</a>.</p>
+</body>
+</html>
+"""
+
+
 def find_chrome() -> Path:
     candidates = [
         Path(r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"),
@@ -262,20 +282,29 @@ def generate_site(data: dict, output_dir: Path) -> None:
 
 
 def copy_shared_assets(output_dir: Path) -> None:
-    shutil.copy2(DOCS / "styles.css", output_dir / "styles.css")
-    shutil.copytree(DOCS / "assets", output_dir / "assets", dirs_exist_ok=True)
+    shutil.copy2(STYLE_PATH, output_dir / "styles.css")
+    icon_output = output_dir / "assets" / "icons"
+    shutil.rmtree(icon_output, ignore_errors=True)
+    icon_output.mkdir(parents=True, exist_ok=True)
+    for icon_name in V1_ICONS:
+        shutil.copy2(ASSET_SOURCE / "icons" / f"{icon_name}.svg", icon_output / f"{icon_name}.svg")
+    shutil.copy2(ASSET_SOURCE / "LUCIDE-LICENSE.txt", output_dir / "assets" / "LUCIDE-LICENSE.txt")
 
 
 def main() -> None:
-    with DATA_PATH.open("r", encoding="utf-8") as source:
-        data = json.load(source)
+    current_config = json.loads(CURRENT_PATH.read_text(encoding="utf-8"))
+    current_version = current_config["version"]
+    current_source = VERSION_DATA_DIR / f"{current_version}.json"
+    if not current_source.exists():
+        raise RuntimeError(f"La versión actual no existe: {current_version}")
+    current_data = json.loads(current_source.read_text(encoding="utf-8"))
+
     DOCS.mkdir(parents=True, exist_ok=True)
-    generate_site(data, DOCS)
-    OUTPUT_PDF.parent.mkdir(parents=True, exist_ok=True)
-    shutil.copy2(PDF_PATH, OUTPUT_PDF)
-    print(f"HTML: {DOCS / 'index.html'}")
-    print(f"PDF:  {PDF_PATH}")
-    print(f"PDF:  {OUTPUT_PDF}")
+    redirect_markup = "\n".join(
+        line.rstrip() for line in render_redirect(current_version, current_data).splitlines()
+    ) + "\n"
+    (DOCS / "index.html").write_text(redirect_markup, encoding="utf-8", newline="\n")
+    print(f"REDIRECCIÓN: {DOCS / 'index.html'} -> {current_version}/")
 
     for version_source in sorted(VERSION_DATA_DIR.glob("*.json")):
         with version_source.open("r", encoding="utf-8") as source:

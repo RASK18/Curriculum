@@ -1,13 +1,13 @@
 # Curriculum
 
 CV estático en español, preparado para GitHub Pages y para impresión A4. La
-versión actual se genera desde [`content/resume.json`](content/resume.json) y
-cada versión histórica conserva su propia instantánea estructurada en
+versión actual se indica en [`content/current.json`](content/current.json) y
+cada versión conserva su propia fuente estructurada en
 [`content/versions/`](content/versions/).
 
 ## Generación
 
-Requisitos: Python 3 con `reportlab` y `pypdf`.
+Requisitos: Python 3 con `pypdf` y Google Chrome o Microsoft Edge.
 
 ```powershell
 python scripts/generate_cv.py
@@ -20,7 +20,9 @@ mismo HTML/CSS mediante Chrome o Edge en modo headless:
 python scripts/generate_v2.py
 ```
 
-El comando actualiza los html y pdf
+Los generadores mantienen un único PDF por versión dentro de `docs/vN/`. La
+raíz reutiliza el PDF de la versión actual y no se crean copias adicionales en
+`output/pdf/`.
 
 Validación técnica:
 
@@ -30,16 +32,15 @@ python scripts/validate_cv.py
 
 ## Versiones
 
-- `https://disboard.es/Curriculum/` contiene siempre la versión actual.
-- `https://disboard.es/Curriculum/v1/` es una instantánea histórica e inmutable.
+- `https://disboard.es/Curriculum/` redirige a la versión indicada como actual.
+- `https://disboard.es/Curriculum/v1/` es actualmente la versión publicada.
 - `https://disboard.es/Curriculum/v2/` es una vista previa; no sustituye todavía
   a la versión actual.
 
 Para publicar una nueva versión se añade primero su fuente a
 `content/versions/vN.json`. El campo `meta.version` debe coincidir con el nombre
-del archivo; el generador se encarga de crear la carpeta correspondiente en
-`docs/`. Si esa carpeta ya existe, no la sobrescribe: una versión publicada
-permanece inmutable.
+del archivo. Para convertirla en la versión actual se cambia el valor de
+`content/current.json`; el generador actualiza la redirección raíz.
 
 Los layouts especiales se generan con su script dedicado. Mientras `v2` siga en
 estado `draft`, `scripts/generate_v2.py` puede regenerar únicamente su carpeta
@@ -64,6 +65,6 @@ repositorio no contiene un archivo `CNAME`.
 ## Licencias de terceros
 
 Los iconos proceden sin modificaciones de `lucide-static` 1.25.0. Su aviso de
-licencia se conserva en [`docs/assets/LUCIDE-LICENSE.txt`](docs/assets/LUCIDE-LICENSE.txt)
-y en [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md). Los mismos archivos
-oficiales se conservan como fuente reutilizable en [`assets/lucide/`](assets/lucide/).
+licencia se incluye dentro de cada versión publicada y en
+[`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md). Los archivos oficiales se
+conservan como fuente reutilizable en [`assets/lucide/`](assets/lucide/).

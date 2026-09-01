@@ -12,10 +12,9 @@ from pypdf import PdfReader
 ROOT = Path(__file__).resolve().parents[1]
 DOCS = ROOT / "docs"
 HTML_PATH = DOCS / "index.html"
-CSS_PATH = DOCS / "styles.css"
-PDF_PATH = DOCS / "Rafael-Jimenez-CV.pdf"
-DATA_PATH = ROOT / "content" / "resume.json"
+CURRENT_PATH = ROOT / "content" / "current.json"
 VERSION_DATA_DIR = ROOT / "content" / "versions"
+V1_STYLE_SOURCE = ROOT / "layouts" / "v1" / "styles.css"
 PDF_NAME = "Rafael-Jimenez-CV.pdf"
 
 
@@ -41,14 +40,36 @@ def html_text(markup: str) -> str:
     return re.sub(r"\s+", " ", html.unescape(without_tags)).strip()
 
 
-def validate_html(data: dict, html_path: Path) -> None:
+def validate_redirect(version_id: str, data: dict) -> None:
+    markup = HTML_PATH.read_text(encoding="utf-8")
+    target = f"{version_id}/"
+    assert_true('<html lang="es">' in markup, "La redirección raíz no declara lang=es")
+    assert_true(
+        f'<meta http-equiv="refresh" content="0; url={target}">' in markup,
+        "La redirección raíz no apunta a la versión actual",
+    )
+    assert_true(f'href="{target}"' in markup, "Falta el enlace alternativo a la versión actual")
+    assert_true(
+        f'href="{data["meta"]["canonical"]}"' in markup,
+        "La redirección raíz no usa la canonical de la versión actual",
+    )
+    assert_true('content="noindex,nofollow,noarchive"' in markup, "Falta robots en la redirección")
+    root_files = {item.name for item in DOCS.iterdir() if item.is_file()}
+    assert_true(
+        root_files == {".nojekyll", "index.html"},
+        f"La raíz contiene archivos innecesarios: {sorted(root_files)}",
+    )
+    assert_true(not (DOCS / "assets").exists(), "La raíz no debe duplicar recursos de las versiones")
+
+
+def validate_html(data: dict, html_path: Path, pdf_href: str = PDF_NAME) -> None:
     page_dir = html_path.parent
     markup = html_path.read_text(encoding="utf-8")
     text = html_text(markup)
     assert_true('<html lang="es">' in markup, "Falta lang=es")
     assert_true('content="noindex,nofollow,noarchive"' in markup, "Falta la directiva robots")
     assert_true(f'href="{data["meta"]["canonical"]}"' in markup, "Canonical incorrecta")
-    assert_true('href="Rafael-Jimenez-CV.pdf"' in markup, "El PDF no usa una ruta relativa")
+    assert_true(f'href="{pdf_href}"' in markup, "El enlace al PDF no es el esperado")
     assert_true("<svg" not in markup.lower(), "El HTML no debe contener SVG dibujado manualmente")
     if data["meta"].get("version"):
         assert_true(
@@ -96,7 +117,7 @@ def validate_html(data: dict, html_path: Path) -> None:
         assert_true((font_dir / "OFL.txt").exists(), "Falta la licencia OFL de Roboto Condensed")
 
 
-def validate_css(css_path: Path = CSS_PATH, layout: str = "editorial") -> None:
+def validate_css(css_path: Path, layout: str = "editorial") -> None:
     styles = re.sub(r"\s+", " ", css_path.read_text(encoding="utf-8"))
     assert_true("@page { size: A4 portrait; margin: 0; }" in styles, "La impresión no está configurada como A4")
     assert_true("(max-width: 850px)" in styles, "Falta el flujo continuo para móvil/tablet")
@@ -248,20 +269,16 @@ def validate_v2_contrast() -> None:
 
 
 def main() -> None:
-    data = json.loads(DATA_PATH.read_text(encoding="utf-8"))
-    v1_data = json.loads((VERSION_DATA_DIR / "v1.json").read_text(encoding="utf-8"))
-    assert_true(
-        {key: value for key, value in data.items() if key != "meta"}
-        == {key: value for key, value in v1_data.items() if key != "meta"},
-        "La versión publicada y la v1 deben compartir exactamente el mismo contenido",
-    )
+    current_config = json.loads(CURRENT_PATH.read_text(encoding="utf-8"))
+    current_version = current_config["version"]
+    current_source = VERSION_DATA_DIR / f"{current_version}.json"
+    assert_true(current_source.exists(), f"La versión actual no existe: {current_version}")
+    current_data = json.loads(current_source.read_text(encoding="utf-8"))
     assert_true(not (DOCS / "CNAME").exists(), "El project site no debe incluir CNAME")
-    validate_html(data, HTML_PATH)
-    validate_css()
-    validate_pdf(data, PDF_PATH)
-    validate_contrast()
-    print("HTML: rutas, metadatos, contenido e iconos correctos")
-    print("PDF: 2 páginas A4, texto seleccionable y 3 enlaces clicables")
+    validate_redirect(current_version, current_data)
+    output_pdfs = list((ROOT / "output" / "pdf").glob("*.pdf"))
+    assert_true(not output_pdfs, "output/pdf no debe contener copias duplicadas")
+    print(f"RAÍZ: redirección mínima a {current_version}/")
 
     for version_source in sorted(VERSION_DATA_DIR.glob("*.json")):
         version_data = json.loads(version_source.read_text(encoding="utf-8"))
@@ -272,8 +289,10 @@ def main() -> None:
         validate_pdf(version_data, version_dir / PDF_NAME)
         layout = version_data["meta"].get("layout", "editorial")
         if layout == "editorial":
-            assert_true((version_dir / "styles.css").read_bytes() == CSS_PATH.read_bytes(),
-                        f"Los estilos de {version_id} no coinciden con la versión publicada")
+            validate_css(version_dir / "styles.css", layout)
+            assert_true((version_dir / "styles.css").read_bytes() == V1_STYLE_SOURCE.read_bytes(),
+                        f"Los estilos de {version_id} no coinciden con su fuente")
+            validate_contrast()
         else:
             validate_css(version_dir / "styles.css", layout)
             if layout == "tech-panel":

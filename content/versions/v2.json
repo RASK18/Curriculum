@@ -46,7 +46,7 @@
       "title": "Datos",
       "icon": "database",
       "accent": "orange",
-      "items": ["SQL Server", "T-SQL", "stored procedures", "índices", "planes de ejecución", "Redis"]
+      "items": ["SQL Server", "stored procedures", "índices", "planes de ejecución", "Redis"]
     },
     {
       "title": "Arquitectura",
@@ -64,7 +64,7 @@
       "title": "Testing & observabilidad",
       "icon": "test-tube",
       "accent": "blue",
-      "items": ["xUnit", "Moq", "FluentAssertions", "Serilog", "Swagger", "Prometheus"]
+      "items": ["xUnit", "Moq", "FluentAssertions", "Serilog", "Swagger"]
     },
     {
       "title": "Integraciones",
@@ -85,7 +85,7 @@
         "Incorporación de EF Core Database First y pruebas automatizadas con xUnit, Moq y FluentAssertions.",
         "Evolución de una API .NET 8 para el dominio de vuelos, contratación y gestión de riesgo."
       ],
-      "technologies": [".NET 8", "SQL Server", "T-SQL", "EF Core DB First", "xUnit"]
+      "technologies": [".NET 8", "SQL Server", "EF Core DB First", "xUnit"]
     },
     {
       "name": "LaLiga SportsTV · Suscripciones",

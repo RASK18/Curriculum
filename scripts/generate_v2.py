@@ -19,7 +19,6 @@ ASSET_SOURCE = ROOT / "assets" / "lucide"
 FONT_SOURCE = ROOT / "assets" / "fonts" / "roboto-condensed"
 OUTPUT_DIR = ROOT / "docs" / "v2"
 PDF_NAME = "Rafael-Jimenez-CV.pdf"
-OUTPUT_PDF = ROOT / "output" / "pdf" / "Rafael-Jimenez-CV-v2.pdf"
 
 
 def esc(value: str) -> str:
@@ -348,12 +347,9 @@ def main() -> None:
 
     pdf_path = OUTPUT_DIR / PDF_NAME
     generate_pdf(html_path, pdf_path)
-    OUTPUT_PDF.parent.mkdir(parents=True, exist_ok=True)
-    shutil.copy2(pdf_path, OUTPUT_PDF)
 
     print(f"HTML: {html_path}")
     print(f"PDF:  {pdf_path}")
-    print(f"PDF:  {OUTPUT_PDF}")
 
 
 if __name__ == "__main__":
